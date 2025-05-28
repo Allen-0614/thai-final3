@@ -10,7 +10,7 @@ public class MyGUI {
     private JFrame frame;
     private JPanel mainPanel;
     private JLabel bossLabel;
-    private JLabel questionLabel;
+    private JTextArea questionLabel;
     private JButton[] answerButtons;
     private Boss boss;
     private Player player;
@@ -18,7 +18,6 @@ public class MyGUI {
     private Question currentQuestion;
     private Random random = new Random();
 
-    // Add this inner class inside MyGUI.java
     class BackgroundPanel extends JPanel {
         private Image backgroundImage;
 
@@ -40,8 +39,8 @@ public class MyGUI {
         }
     }
 
-    private JPanel buttonPanel; // Add this field
-    private JButton exitButtonTop; // Add this field
+    private JPanel buttonPanel;
+    private JButton exitButtonTop;
 
     public MyGUI(ArrayList<Question> questions, Player player, Boss boss) {
         this.questions = questions;
@@ -51,26 +50,26 @@ public class MyGUI {
         frame = new JFrame("APUSH Study Game");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(600, 400);
+        frame.setResizable(true);
 
-        // Use your image file name here
         BackgroundPanel bgPanel = new BackgroundPanel("src/paperpic.jpg");
         frame.setContentPane(bgPanel);
-
         frame.setLayout(new BorderLayout());
 
-        // Title label
+        JPanel topPanel = new JPanel(new BorderLayout());
+        topPanel.setOpaque(false);
+
         JLabel titleLabel = new JLabel("APUSH Study Game", SwingConstants.CENTER);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 30));
-        titleLabel.setOpaque(false); // Transparent
-        frame.add(titleLabel, BorderLayout.NORTH);
+        titleLabel.setOpaque(false);
+        topPanel.add(titleLabel, BorderLayout.CENTER);
 
-        // Main panel for dynamic content
-        mainPanel = new JPanel();
-        mainPanel.setOpaque(false); // Transparent
-        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+        frame.add(topPanel, BorderLayout.NORTH);
+
+        mainPanel = new JPanel(new GridBagLayout());
+        mainPanel.setOpaque(false);
         frame.add(mainPanel, BorderLayout.CENTER);
 
-        // Centered button panel
         buttonPanel = new JPanel();
         buttonPanel.setOpaque(false);
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
@@ -87,14 +86,19 @@ public class MyGUI {
         buttonPanel.add(exitButton);
         buttonPanel.add(Box.createVerticalGlue());
 
-        mainPanel.add(Box.createVerticalGlue());
-        mainPanel.add(buttonPanel);
-        mainPanel.add(Box.createVerticalGlue());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        gbc.anchor = GridBagConstraints.CENTER;
+        gbc.fill = GridBagConstraints.NONE;
+
+        mainPanel.add(buttonPanel, gbc);
 
         startButton.addActionListener(e -> showBattleScreen());
         exitButton.addActionListener(e -> System.exit(0));
 
-        // Prepare the top-right exit button but don't add yet
         exitButtonTop = new JButton("Exit");
         exitButtonTop.addActionListener(e -> System.exit(0));
 
@@ -105,32 +109,48 @@ public class MyGUI {
         mainPanel.removeAll();
         mainPanel.setLayout(new BorderLayout());
 
-        // Add exit button to top-right
-        JPanel topPanel = new JPanel(new BorderLayout());
-        topPanel.setOpaque(false);
+        JPanel topPanel = (JPanel) frame.getContentPane().getComponent(0);
         topPanel.add(exitButtonTop, BorderLayout.EAST);
-        frame.add(topPanel, BorderLayout.NORTH);
 
-        // Boss health label
         bossLabel = new JLabel(boss.toString(), SwingConstants.CENTER);
         bossLabel.setFont(new Font("Arial", Font.BOLD, 22));
         mainPanel.add(bossLabel, BorderLayout.NORTH);
 
-        // Question panel
+        // Create wrapper panel to hold question panel at the top
+        JPanel wrapperPanel = new JPanel(new BorderLayout());
+        wrapperPanel.setOpaque(false);
+
+        // Question panel with vertical layout
         JPanel questionPanel = new JPanel();
         questionPanel.setLayout(new BoxLayout(questionPanel, BoxLayout.Y_AXIS));
-        questionPanel.setOpaque(false); // <-- Make transparent so background shows through
+        questionPanel.setOpaque(false);
+        questionPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20)); // top, left, bottom, right
+        questionPanel.setMaximumSize(new Dimension(500, Integer.MAX_VALUE)); // prevent horizontal overflow
 
-        questionLabel = new JLabel();
-        questionLabel.setFont(new Font("Arial", Font.PLAIN, 16));
-        questionLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        questionPanel.add(questionLabel);
+        wrapperPanel.add(questionPanel, BorderLayout.NORTH); // pin to top
+
+        // Question area
+        JTextArea questionArea = new JTextArea();
+        questionArea.setFont(new Font("Arial", Font.PLAIN, 16));
+        questionArea.setLineWrap(true);
+        questionArea.setWrapStyleWord(true);
+        questionArea.setEditable(false);
+        questionArea.setOpaque(false);
+        questionArea.setFocusable(false);
+        questionArea.setAlignmentX(Component.CENTER_ALIGNMENT);
+        questionArea.setBorder(null);
+        questionArea.setRows(3);
+
+        this.questionLabel = questionArea;
+        questionPanel.add(questionArea);
 
         // Answer buttons
         answerButtons = new JButton[4];
         for (int i = 0; i < 4; i++) {
             JButton btn = new JButton();
             btn.setAlignmentX(Component.CENTER_ALIGNMENT);
+            btn.setMaximumSize(new Dimension(500, 40)); // Limit width to 500px
+            btn.setPreferredSize(new Dimension(500, 40)); // Preferred width
             int idx = i;
             btn.addActionListener(e -> handleAnswer(idx));
             answerButtons[i] = btn;
@@ -138,7 +158,15 @@ public class MyGUI {
             questionPanel.add(btn);
         }
 
-        mainPanel.add(questionPanel, BorderLayout.CENTER);
+        JScrollPane scrollPane = new JScrollPane(wrapperPanel);
+        scrollPane.setOpaque(false);
+        scrollPane.getViewport().setOpaque(false);
+        scrollPane.setBorder(null);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
+
+        mainPanel.add(scrollPane, BorderLayout.CENTER);
 
         nextQuestion();
 
@@ -154,12 +182,11 @@ public class MyGUI {
         int idx = random.nextInt(questions.size());
         currentQuestion = questions.remove(idx);
 
-        // Show stimulus/source if present, then the question
-        String displayText = "<html>";
+        String displayText = "";
         if (currentQuestion.getStimulus() != null && !currentQuestion.getStimulus().isEmpty()) {
-            displayText += "<b>Source:</b><br>" + currentQuestion.getStimulus().replace("\n", "<br>") + "<br><br>";
+            displayText += "Source:\n" + currentQuestion.getStimulus() + "\n\n";
         }
-        displayText += currentQuestion.getQuestion() + "</html>";
+        displayText += currentQuestion.getQuestion();
 
         questionLabel.setText(displayText);
 
@@ -172,7 +199,7 @@ public class MyGUI {
     }
 
     private void handleAnswer(int idx) {
-        String userInput = answerButtons[idx].getText().substring(0, 1); // "A", "B", etc.
+        String userInput = answerButtons[idx].getText().substring(0, 1);
         boolean correct = currentQuestion.isCorrect(userInput);
         if (correct) {
             player.attackBoss(boss, true);
