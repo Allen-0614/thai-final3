@@ -13,7 +13,7 @@ public class App {
         ArrayList<Question> questionsP4 = new ArrayList<Question>();
 
         Player allen = new Player(100000, 10000);
-        Boss rehan = new Boss(10001, "weakling rehan");
+        Boss rehan = new Boss(1, "weakling rehan");
         
         javax.swing.SwingUtilities.invokeLater(() -> {
             new MyGUI(questionsP1, allen, rehan); // create and show GUI
