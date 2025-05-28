@@ -2,6 +2,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
+import javax.imageio.ImageIO;
+import java.io.File;
+import java.io.IOException;
 
 public class MyGUI {
     private JFrame frame;
@@ -15,6 +18,31 @@ public class MyGUI {
     private Question currentQuestion;
     private Random random = new Random();
 
+    // Add this inner class inside MyGUI.java
+    class BackgroundPanel extends JPanel {
+        private Image backgroundImage;
+
+        public BackgroundPanel(String imagePath) {
+            try {
+                backgroundImage = ImageIO.read(new File(imagePath));
+            } catch (IOException e) {
+                backgroundImage = null;
+            }
+            setLayout(new BorderLayout());
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            if (backgroundImage != null) {
+                g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
+            }
+        }
+    }
+
+    private JPanel buttonPanel; // Add this field
+    private JButton exitButtonTop; // Add this field
+
     public MyGUI(ArrayList<Question> questions, Player player, Boss boss) {
         this.questions = questions;
         this.player = player;
@@ -23,30 +51,52 @@ public class MyGUI {
         frame = new JFrame("APUSH Study Game");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(600, 400);
+
+        // Use your image file name here
+        BackgroundPanel bgPanel = new BackgroundPanel("src/paperpic.jpg");
+        frame.setContentPane(bgPanel);
+
         frame.setLayout(new BorderLayout());
-        frame.getContentPane().setBackground(Color.WHITE);
 
         // Title label
         JLabel titleLabel = new JLabel("APUSH Study Game", SwingConstants.CENTER);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 30));
+        titleLabel.setOpaque(false); // Transparent
         frame.add(titleLabel, BorderLayout.NORTH);
 
         // Main panel for dynamic content
         mainPanel = new JPanel();
-        mainPanel.setBackground(Color.WHITE);
+        mainPanel.setOpaque(false); // Transparent
+        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
         frame.add(mainPanel, BorderLayout.CENTER);
 
-        // Start/Exit buttons
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.setBackground(Color.WHITE);
+        // Centered button panel
+        buttonPanel = new JPanel();
+        buttonPanel.setOpaque(false);
+        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
+        buttonPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
         JButton startButton = new JButton("Start Game");
         JButton exitButton = new JButton("Exit Game");
+        startButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        exitButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        buttonPanel.add(Box.createVerticalGlue());
         buttonPanel.add(startButton);
+        buttonPanel.add(Box.createVerticalStrut(20));
         buttonPanel.add(exitButton);
-        frame.add(buttonPanel, BorderLayout.SOUTH);
+        buttonPanel.add(Box.createVerticalGlue());
+
+        mainPanel.add(Box.createVerticalGlue());
+        mainPanel.add(buttonPanel);
+        mainPanel.add(Box.createVerticalGlue());
 
         startButton.addActionListener(e -> showBattleScreen());
         exitButton.addActionListener(e -> System.exit(0));
+
+        // Prepare the top-right exit button but don't add yet
+        exitButtonTop = new JButton("Exit");
+        exitButtonTop.addActionListener(e -> System.exit(0));
 
         frame.setVisible(true);
     }
@@ -54,6 +104,12 @@ public class MyGUI {
     private void showBattleScreen() {
         mainPanel.removeAll();
         mainPanel.setLayout(new BorderLayout());
+
+        // Add exit button to top-right
+        JPanel topPanel = new JPanel(new BorderLayout());
+        topPanel.setOpaque(false);
+        topPanel.add(exitButtonTop, BorderLayout.EAST);
+        frame.add(topPanel, BorderLayout.NORTH);
 
         // Boss health label
         bossLabel = new JLabel(boss.toString(), SwingConstants.CENTER);
@@ -63,7 +119,7 @@ public class MyGUI {
         // Question panel
         JPanel questionPanel = new JPanel();
         questionPanel.setLayout(new BoxLayout(questionPanel, BoxLayout.Y_AXIS));
-        questionPanel.setBackground(Color.WHITE);
+        questionPanel.setOpaque(false); // <-- Make transparent so background shows through
 
         questionLabel = new JLabel();
         questionLabel.setFont(new Font("Arial", Font.PLAIN, 16));
