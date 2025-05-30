@@ -113,15 +113,31 @@ public class MyGUI {
         selectPanel.setOpaque(false);
         selectPanel.setLayout(new BoxLayout(selectPanel, BoxLayout.Y_AXIS));
 
-        selectPanel.add(new JLabel("Select a Battle:", SwingConstants.CENTER));
+        JLabel selectLabel = new JLabel("Select a Battle:", SwingConstants.CENTER);
+        selectLabel.setFont(new Font("Arial", Font.BOLD, 22));
+        selectLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        selectPanel.add(selectLabel);
+        selectPanel.add(Box.createVerticalStrut(20));
+
         for (Battle battle : battles) {
             JButton btn = new JButton(battle.getName());
+            btn.setAlignmentX(Component.CENTER_ALIGNMENT);
+            btn.setMaximumSize(new Dimension(300, 40));
+            btn.setPreferredSize(new Dimension(300, 40));
             btn.addActionListener(e -> startBattle(battle));
             selectPanel.add(btn);
             selectPanel.add(Box.createVerticalStrut(10));
         }
 
-        mainPanel.add(selectPanel);
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        gbc.anchor = GridBagConstraints.CENTER;
+        gbc.fill = GridBagConstraints.NONE;
+
+        mainPanel.add(selectPanel, gbc);
         frame.revalidate();
         frame.repaint();
     }
