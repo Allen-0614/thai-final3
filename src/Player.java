@@ -1,10 +1,12 @@
 public class Player {
     private String name;
     private int health;
+    private int initialHealth;
     private int damage;
 
     public Player(int health, int damage) {
         this.health = health;
+        this.initialHealth = health; // store initial health
         this.damage = damage;
     }
 
@@ -24,12 +26,14 @@ public class Player {
         this.health = health;
     }
 
-    
-    
-    public void attackBoss(Boss boss, boolean correct){
-        if(correct){
+    public void reset() {
+        this.health = initialHealth;
+    }
+
+    public void attackBoss(Boss boss, boolean correct) {
+        if (correct) {
             boss.setHealth(boss.getHealth() - damage);
-            if(boss.getHealth() <= 0){
+            if (boss.getHealth() <= 0) {
                 boss.setAlive(false);
                 boss.setHealth(0);
             }

@@ -130,7 +130,7 @@ public class MyGUI {
         this.currentBattle = battle;
         this.questions = new ArrayList<>(battle.getQuestions());
         this.boss = battle.getBoss();
-        // Reset boss/player if needed
+        this.player = battle.getPlayer(); // <-- add this line
         showBattleScreen();
     }
 
@@ -228,8 +228,9 @@ public class MyGUI {
     }
 
     private void handleAnswer(int idx) {
-        String userInput = answerButtons[idx].getText().substring(0, 1);
-        boolean correct = currentQuestion.isCorrect(userInput);
+        int correctIdx = currentQuestion.getCorrectIndex();
+        boolean correct = (idx == correctIdx);
+
         if (correct) {
             player.attackBoss(boss, true);
             JOptionPane.showMessageDialog(frame, "Correct! You hit the boss!");
@@ -246,12 +247,43 @@ public class MyGUI {
 
     private void endGame() {
         mainPanel.removeAll();
+        mainPanel.setLayout(new GridBagLayout()); // Center everything
+
         JLabel endLabel = new JLabel(
             bossIsAlive() ? "You lost! Boss survived." : "Congratulations! You defeated the boss!",
             SwingConstants.CENTER
         );
         endLabel.setFont(new Font("Arial", Font.BOLD, 24));
-        mainPanel.add(endLabel, BorderLayout.CENTER);
+        endLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JButton backButton = new JButton("Back to Battle Select");
+        backButton.setFont(new Font("Arial", Font.PLAIN, 18));
+        backButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        backButton.addActionListener(e -> {
+            boss.reset();
+            player.reset();
+            questions = new ArrayList<>(currentBattle.getQuestions());
+            showBattleSelectMenu();
+        });
+
+        JPanel endPanel = new JPanel();
+        endPanel.setOpaque(false);
+        endPanel.setLayout(new BoxLayout(endPanel, BoxLayout.Y_AXIS));
+        endPanel.add(Box.createVerticalGlue());
+        endPanel.add(endLabel);
+        endPanel.add(Box.createVerticalStrut(20));
+        endPanel.add(backButton);
+        endPanel.add(Box.createVerticalGlue());
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        gbc.anchor = GridBagConstraints.CENTER;
+        gbc.fill = GridBagConstraints.NONE;
+
+        mainPanel.add(endPanel, gbc);
         frame.revalidate();
         frame.repaint();
     }

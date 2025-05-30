@@ -1,10 +1,12 @@
 public class Boss {
     private int health;
+    private int initialHealth;
     private String name;
     private boolean alive;
     
     public Boss(int health, String name) {
         this.health = health;
+        this.initialHealth = health; // store initial health
         this.name = name;
         this.alive = true;
     }
@@ -36,5 +38,10 @@ public class Boss {
         }
         System.out.println("");
         return;
+    }
+
+    public void reset() {
+        this.health = initialHealth;
+        this.alive = true;
     }
 }

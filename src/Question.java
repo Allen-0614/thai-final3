@@ -92,4 +92,9 @@ public class Question {
             System.out.println("You were wrong and slow... atleast you are improving!");
         }
     }
+
+    public int getCorrectIndex() {
+        // correct is "A", "B", "C", or "D"
+        return correct.toUpperCase().charAt(0) - 'A';
+    }
 }

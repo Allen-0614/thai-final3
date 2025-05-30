@@ -17,11 +17,12 @@ public class App {
         Boss rehan = new Boss(10001, "weakling rehan");
         Boss brixton = new Boss(10001, "evil brixton");
         Boss boyuan = new Boss(10001, "boyuan the great");
-        
+        Boss Allen = new Boss(10001, "boyuan the great");
         ArrayList<Battle> battles = new ArrayList<>();
-        battles.add(new Battle("Period 1", questionsP1, allen,rehan));
-        battles.add(new Battle("Period 2", questionsP2, allen,brixton));
-        battles.add(new Battle("Period 3", questionsP3, allen,boyuan));
+        battles.add(new Battle("Rehan", questionsP1, allen,rehan));
+        battles.add(new Battle("Brixton", questionsP2, allen,brixton));
+        battles.add(new Battle("Boyuan", questionsP3, allen,boyuan));
+        battles.add(new Battle("Allen", questionsP4, allen,Allen));
         // ...add more battles...
 
         javax.swing.SwingUtilities.invokeLater(() -> {
