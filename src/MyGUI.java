@@ -2,7 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
-import javax.imageio.ImageIO;
+import javax.imageio.ImageIO; 
 import java.io.File;
 import java.io.IOException;
 
@@ -19,6 +19,8 @@ public class MyGUI {
     private ArrayList<Question> questions;
     private Question currentQuestion;
     private Random random = new Random();
+    private JLabel playerHealthLabel;
+   
 
     class BackgroundPanel extends JPanel {
         private Image backgroundImage;
@@ -52,7 +54,8 @@ public class MyGUI {
         frame.setSize(600, 400);
         frame.setResizable(true);
 
-        BackgroundPanel bgPanel = new BackgroundPanel("src/paperpic.jpg");
+        // 1743454442086
+        BackgroundPanel bgPanel = new BackgroundPanel("src/whitePaper.jpg");
         frame.setContentPane(bgPanel);
         frame.setLayout(new BorderLayout());
 
@@ -102,6 +105,8 @@ public class MyGUI {
         exitButtonTop = new JButton("Exit");
         exitButtonTop.addActionListener(e -> System.exit(0));
 
+        titleLabel.setForeground(Color.BLACK);
+
         frame.setVisible(true);
     }
 
@@ -125,6 +130,8 @@ public class MyGUI {
             btn.setMaximumSize(new Dimension(300, 40));
             btn.setPreferredSize(new Dimension(300, 40));
             btn.addActionListener(e -> startBattle(battle));
+            btn.setForeground(Color.WHITE);
+            btn.setBackground(Color.DARK_GRAY); // Optional for contrast
             selectPanel.add(btn);
             selectPanel.add(Box.createVerticalStrut(10));
         }
@@ -159,6 +166,7 @@ public class MyGUI {
 
         bossLabel = new JLabel(boss.toString(), SwingConstants.CENTER);
         bossLabel.setFont(new Font("Arial", Font.BOLD, 22));
+        bossLabel.setForeground(Color.BLACK);
         mainPanel.add(bossLabel, BorderLayout.NORTH);
 
         // Create wrapper panel to hold question panel at the top
@@ -176,7 +184,7 @@ public class MyGUI {
 
         // Question area
         JTextArea questionArea = new JTextArea();
-        questionArea.setFont(new Font("Arial", Font.PLAIN, 16));
+        questionArea.setFont(new Font("Arial", Font.BOLD, 16));
         questionArea.setLineWrap(true);
         questionArea.setWrapStyleWord(true);
         questionArea.setEditable(false);
@@ -187,6 +195,8 @@ public class MyGUI {
         questionArea.setRows(3);
 
         this.questionLabel = questionArea;
+        questionLabel.setForeground(Color.BLACK);
+
         questionPanel.add(questionArea);
 
         // Answer buttons
@@ -212,6 +222,12 @@ public class MyGUI {
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
 
         mainPanel.add(scrollPane, BorderLayout.CENTER);
+
+        // Player health display at bottom
+        playerHealthLabel = new JLabel("Player Health: " + player.getHealth(), SwingConstants.CENTER);
+        playerHealthLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        playerHealthLabel.setForeground(Color.BLACK); // Change color if needed
+        mainPanel.add(playerHealthLabel, BorderLayout.SOUTH);
 
         nextQuestion();
 
@@ -252,6 +268,8 @@ public class MyGUI {
             JOptionPane.showMessageDialog(frame, "Correct! You hit the boss!");
         } else {
             JOptionPane.showMessageDialog(frame, "Incorrect! Try the next one.");
+            player.setHealth(player.getHealth()-5);
+            playerHealthLabel.setText("Player Health: " + player.getHealth());
         }
         bossLabel.setText(boss.toString());
         nextQuestion();

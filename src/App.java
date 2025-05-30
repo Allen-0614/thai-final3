@@ -6,29 +6,29 @@ import java.util.Scanner;
 
 public class App {
     public static void main(String[] args) {
-        String[] tempAnswers;
+       String[] tempAnswers;
         ArrayList<Question> questionsP1 = new ArrayList<Question>();
         ArrayList<Question> questionsP2 = new ArrayList<Question>();
         ArrayList<Question> questionsP3 = new ArrayList<Question>();
         ArrayList<Question> questionsP4 = new ArrayList<Question>();
 
-        
-        Player allen = new Player(100000, 10000);
-        Boss george = new Boss(10001, "King George III");
-        Boss robert = new Boss(10001, "Robert Lee");
-        Boss rockefeller = new Boss(10001, "Rockefeller");
-        Boss stalin = new Boss(10001, "Stalin");
+        Player allen = new Player(50, 10);
+        Boss rehan = new Boss(30, "King George III");
+        Boss brixton = new Boss( 30, "Robert Lee");
+        Boss boyuan = new Boss(30, "Rockefeller");
+        Boss Allen = new Boss(30, "Stalin");
         ArrayList<Battle> battles = new ArrayList<>();
-        battles.add(new Battle("King George III", questionsP1, allen,george));
-        battles.add(new Battle("Robert Lee", questionsP2, allen,robert));
-        battles.add(new Battle("Rockefeller", questionsP3, allen,rockefeller));
-        battles.add(new Battle("Stalin", questionsP4, allen,stalin));
+        battles.add(new Battle("King George III", questionsP1, allen,rehan));
+        battles.add(new Battle("Robert Lee", questionsP2, allen,brixton));
+        battles.add(new Battle("Rockefeller", questionsP3, allen,boyuan));
+        battles.add(new Battle("Stalin", questionsP4, allen,Allen));
         // ...add more battles...
 
         javax.swing.SwingUtilities.invokeLater(() -> {
             new MyGUI(battles); // create and show GUI
         });
-
+        
+        
         // Period 1 (1491 - 1800)
         tempAnswers = new String[] {
             "A. Converting American Indians to Catholicism",
@@ -611,12 +611,6 @@ questionsP3.add(new Question(
     "A"
 ));
 
-
-
-
-System.out.println(questionsP3.get(questionsP3.size()-1));
-System.out.println(questionsP3.size());
-
         // period 4 (1945 - present)
 sharedStimulus = "\"The pursuit of this widened war has narrowed domestic welfare programs, making the poor, white and Negro, bear the heaviest burdens both at the front and at home. . . . " +
 "It is estimated that we spend $322,000 for each enemy we kill, while we spend in the so-called war on poverty in America only about $53.00 for each person classified as 'poor.' . . . " +
@@ -782,6 +776,7 @@ questionsP4.add(new Question(
     tempAnswers,
     "B"
 ));
+
 
 
 
