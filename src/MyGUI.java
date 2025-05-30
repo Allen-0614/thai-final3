@@ -1,10 +1,12 @@
-import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 import javax.imageio.ImageIO; 
 import java.io.File;
 import java.io.IOException;
+import javax.imageio.ImageIO;
+import javax.swing.*;
 
 public class MyGUI {
     private JFrame frame;
@@ -20,7 +22,7 @@ public class MyGUI {
     private Question currentQuestion;
     private Random random = new Random();
     private JLabel playerHealthLabel;
-   
+
 
     class BackgroundPanel extends JPanel {
         private Image backgroundImage;
@@ -108,6 +110,8 @@ public class MyGUI {
         titleLabel.setForeground(Color.BLACK);
 
         frame.setVisible(true);
+
+        
     }
 
     private void showBattleSelectMenu() {
@@ -229,6 +233,12 @@ public class MyGUI {
         playerHealthLabel.setForeground(Color.BLACK); // Change color if needed
         mainPanel.add(playerHealthLabel, BorderLayout.SOUTH);
 
+        // Player health display at bottom
+        playerHealthLabel = new JLabel("Player Health: " + player.getHealth(), SwingConstants.CENTER);
+        playerHealthLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        playerHealthLabel.setForeground(Color.BLACK); // Change color if needed
+        mainPanel.add(playerHealthLabel, BorderLayout.SOUTH);
+
         nextQuestion();
 
         frame.revalidate();
@@ -260,20 +270,48 @@ public class MyGUI {
     }
 
     private void handleAnswer(int idx) {
-        int correctIdx = currentQuestion.getCorrectIndex();
-        boolean correct = (idx == correctIdx);
+    int correctIdx = currentQuestion.getCorrectIndex();
+    boolean correct = (idx == correctIdx);
 
         if (correct) {
             player.attackBoss(boss, true);
             JOptionPane.showMessageDialog(frame, "Correct! You hit the boss!");
         } else {
             JOptionPane.showMessageDialog(frame, "Incorrect! Try the next one.");
-            player.setHealth(player.getHealth()-5);
             playerHealthLabel.setText("Player Health: " + player.getHealth());
         }
+    if (correct) {
+        player.attackBoss(boss, true);
+        JOptionPane.showMessageDialog(frame, "Correct! You hit the boss!");
         bossLabel.setText(boss.toString());
         nextQuestion();
+    } else {
+        // Create and show dodge minigame
+        JDialog dodgeDialog = new JDialog(frame, "Dodge the Attack!", true);
+        BattleBoxPanel battleBox = new BattleBoxPanel(player);
+
+        dodgeDialog.add(battleBox);
+        dodgeDialog.pack();
+        dodgeDialog.setLocationRelativeTo(frame);
+
+        // Timer to close minigame and continue
+        javax.swing.Timer miniGameTimer = new javax.swing.Timer(8000, e -> {
+            dodgeDialog.dispose(); // Close minigame
+            if (player.getHealth() <= 0) {
+                JOptionPane.showMessageDialog(frame, "You lost all your health!");
+                endGame();
+            } else {
+                JOptionPane.showMessageDialog(frame, "Minigame over! Moving on...");
+                playerHealthLabel.setText("Player Health: " + player.getHealth());
+                nextQuestion();
+            }
+        });
+        miniGameTimer.setRepeats(false);
+        miniGameTimer.start();
+
+        dodgeDialog.setVisible(true); // Blocks until closed
     }
+}
 
     private boolean bossIsAlive() {
         return boss.getHealth() > 0;
@@ -322,3 +360,4 @@ public class MyGUI {
         frame.repaint();
     }
 }
+
