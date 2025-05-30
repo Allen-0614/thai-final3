@@ -12,11 +12,20 @@ public class App {
         ArrayList<Question> questionsP3 = new ArrayList<Question>();
         ArrayList<Question> questionsP4 = new ArrayList<Question>();
 
+        
         Player allen = new Player(100000, 10000);
         Boss rehan = new Boss(10001, "weakling rehan");
+        Boss brixton = new Boss(10001, "evil brixton");
+        Boss boyuan = new Boss(10001, "boyuan the great");
         
+        ArrayList<Battle> battles = new ArrayList<>();
+        battles.add(new Battle("Period 1", questionsP1, allen,rehan));
+        battles.add(new Battle("Period 2", questionsP2, allen,brixton));
+        battles.add(new Battle("Period 3", questionsP3, allen,boyuan));
+        // ...add more battles...
+
         javax.swing.SwingUtilities.invokeLater(() -> {
-            new MyGUI(questionsP1, allen, rehan); // create and show GUI
+            new MyGUI(battles); // create and show GUI
         });
 
         // Period 1 (1491 - 1800)

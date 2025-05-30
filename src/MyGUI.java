@@ -9,6 +9,8 @@ import java.io.IOException;
 public class MyGUI {
     private JFrame frame;
     private JPanel mainPanel;
+    private ArrayList<Battle> battles;
+    private Battle currentBattle;
     private JLabel bossLabel;
     private JTextArea questionLabel;
     private JButton[] answerButtons;
@@ -42,10 +44,8 @@ public class MyGUI {
     private JPanel buttonPanel;
     private JButton exitButtonTop;
 
-    public MyGUI(ArrayList<Question> questions, Player player, Boss boss) {
-        this.questions = questions;
-        this.player = player;
-        this.boss = boss;
+    public MyGUI(ArrayList<Battle> battles) {
+        this.battles = battles;
 
         frame = new JFrame("APUSH Study Game");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -96,13 +96,42 @@ public class MyGUI {
 
         mainPanel.add(buttonPanel, gbc);
 
-        startButton.addActionListener(e -> showBattleScreen());
+        startButton.addActionListener(e -> showBattleSelectMenu());
         exitButton.addActionListener(e -> System.exit(0));
 
         exitButtonTop = new JButton("Exit");
         exitButtonTop.addActionListener(e -> System.exit(0));
 
         frame.setVisible(true);
+    }
+
+    private void showBattleSelectMenu() {
+        mainPanel.removeAll();
+        mainPanel.setLayout(new GridBagLayout());
+
+        JPanel selectPanel = new JPanel();
+        selectPanel.setOpaque(false);
+        selectPanel.setLayout(new BoxLayout(selectPanel, BoxLayout.Y_AXIS));
+
+        selectPanel.add(new JLabel("Select a Battle:", SwingConstants.CENTER));
+        for (Battle battle : battles) {
+            JButton btn = new JButton(battle.getName());
+            btn.addActionListener(e -> startBattle(battle));
+            selectPanel.add(btn);
+            selectPanel.add(Box.createVerticalStrut(10));
+        }
+
+        mainPanel.add(selectPanel);
+        frame.revalidate();
+        frame.repaint();
+    }
+
+    private void startBattle(Battle battle) {
+        this.currentBattle = battle;
+        this.questions = new ArrayList<>(battle.getQuestions());
+        this.boss = battle.getBoss();
+        // Reset boss/player if needed
+        showBattleScreen();
     }
 
     private void showBattleScreen() {
