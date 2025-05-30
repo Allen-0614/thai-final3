@@ -14,15 +14,15 @@ public class App {
 
         
         Player allen = new Player(100000, 10000);
-        Boss rehan = new Boss(10001, "weakling rehan");
-        Boss brixton = new Boss(10001, "evil brixton");
-        Boss boyuan = new Boss(10001, "boyuan the great");
-        Boss Allen = new Boss(10001, "boyuan the great");
+        Boss george = new Boss(10001, "King George III");
+        Boss robert = new Boss(10001, "Robert Lee");
+        Boss rockefeller = new Boss(10001, "Rockefeller");
+        Boss stalin = new Boss(10001, "Stalin");
         ArrayList<Battle> battles = new ArrayList<>();
-        battles.add(new Battle("King George III", questionsP1, allen,rehan));
-        battles.add(new Battle("Robert Lee", questionsP2, allen,brixton));
-        battles.add(new Battle("Rockefeller", questionsP3, allen,boyuan));
-        battles.add(new Battle("Stalin", questionsP4, allen,Allen));
+        battles.add(new Battle("King George III", questionsP1, allen,george));
+        battles.add(new Battle("Robert Lee", questionsP2, allen,robert));
+        battles.add(new Battle("Rockefeller", questionsP3, allen,rockefeller));
+        battles.add(new Battle("Stalin", questionsP4, allen,stalin));
         // ...add more battles...
 
         javax.swing.SwingUtilities.invokeLater(() -> {
